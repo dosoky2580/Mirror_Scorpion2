@@ -13,13 +13,20 @@ jobs:
         with:
           channel: 'stable'
 
-      - name: Reconstruct Project
+      - name: Absolute Project Rebuild
         run: |
+          # مسح أي ملفات قديمة قد تسبب تعارض
+          rm -rf android build .dart_tool
+          
+          # إعادة إنشاء المشروع من الصفر
           flutter create . --project-name mirror_scorpion2 --org com.adham.mirror
-          # التعديل للملف الجديد .kts
+          
+          # تعديل إعدادات الأندرويد للنسخة الجديدة (kts)
           sed -i 's/compileSdk = .*/compileSdk = 34/g' android/app/build.gradle.kts
-          flutter pub get
-
+          
+          # جلب المكتبات بأحدث نسخ متوافقة
+          flutter pub upgrade --major-versions
+          
       - name: Build Secure APK
         run: flutter build apk --debug
           
