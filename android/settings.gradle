@@ -23,3 +23,6 @@ plugins {
 }
 
 include ":app"
+
+// السطر اللي كان ناقص وهو اللي بيعرف جرايدل بمكان المكتبات
+apply from: "${new File(settingsDir, 'local.properties').with { p -> p.load(it.newDataInputStream()); p.getProperty('flutter.sdk') }}/packages/flutter_tools/gradle/app_plugin_loader.gradle"
