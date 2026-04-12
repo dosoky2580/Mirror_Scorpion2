@@ -13,14 +13,16 @@ jobs:
         with:
           channel: 'stable'
 
-      - name: Stable Build Reconstruction
+      - name: Hard Reset & Build
         run: |
+          # مسح كاش المكتبات على السيرفر تماماً
+          rm -rf /home/runner/.pub-cache
           rm -rf android build .dart_tool pubspec.lock
           
-          # إنشاء المشروع من جديد
+          # إنشاء المشروع
           flutter create . --project-name mirror_scorpion2 --org com.adham.mirror
           
-          # كتابة إعدادات مستقرة تماماً (SDK 34) لضمان توافق المكتبات
+          # إعدادات SDK 34 المستقرة
           cat << 'INNER_EOF' > android/app/build.gradle.kts
           plugins {
               id("com.android.application")
@@ -30,7 +32,7 @@ jobs:
 
           android {
               namespace = "com.adham.mirror.mirror_scorpion2"
-              compileSdk = 34 // العودة للنسخة المستقرة لحل مشكلة الإشعارات
+              compileSdk = 34
 
               compileOptions {
                   sourceCompatibility = JavaVersion.VERSION_1_8
