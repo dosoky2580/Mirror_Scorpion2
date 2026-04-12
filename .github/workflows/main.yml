@@ -13,12 +13,18 @@ jobs:
         with:
           channel: 'stable'
 
-      - name: Final Build Configuration
+      - name: Force Clean Build
         run: |
-          rm -rf android build .dart_tool
+          # مسح الكاش والملفات القديمة تماماً
+          rm -rf android build .dart_tool pubspec.lock
+          
+          # تعديل ملف pubspec.yaml يدوياً للتأكد من الإصدار المستقر
+          sed -i 's/flutter_local_notifications: .*/flutter_local_notifications: 16.1.0/g' pubspec.yaml
+          
+          # إعادة إنشاء ملفات الأندرويد
           flutter create . --project-name mirror_scorpion2 --org com.adham.mirror
           
-          # إعادة كتابة الإعدادات لدمج الـ NDK والـ Desugaring
+          # إعادة كتابة الإعدادات الصحيحة (SDK 36 & NDK 28)
           cat << 'INNER_EOF' > android/app/build.gradle.kts
           plugins {
               id("com.android.application")
