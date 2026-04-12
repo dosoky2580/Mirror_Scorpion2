@@ -1,7 +1,7 @@
 #!/bin/bash
 cd ~/Mirror_Scorpion2
 
-# 1. إنشاء ملف المكتبات (pubspec.yaml)
+# 1. تحديث ملف المكتبات (إضافة JSON و SQLite للبيانات الضخمة)
 cat << 'PUBSPEC' > pubspec.yaml
 name: mirror_scorpion
 description: Mirror Scorpion AI Project by TetoCollctionWay
@@ -25,16 +25,25 @@ dependencies:
   google_mlkit_text_recognition: ^0.11.0
   path_provider: ^2.1.2
   share_plus: ^7.2.1
+  sqflite: ^2.3.0  # لقاعدة بيانات الأحاديث الضخمة
+  flutter_spinkit: ^5.2.0 # لدوائر التحميل المبهرة
 
 flutter:
   uses-material-design: true
+  assets:
+    - assets/data/  # المجلد اللي هنحط فيه ملفات الـ JSON (قصص، أحاديث)
+    - assets/images/
 PUBSPEC
 
-# 2. إنشاء مجلد lib وكتابة الكود (الهيكل الأساسي)
-mkdir -p lib
+# 2. إنشاء المجلدات اللازمة للبيانات
+mkdir -p assets/data
+mkdir -p lib/models
+
+# 3. كتابة الكود (الهيكل مع دعم استدعاء البيانات)
 cat << 'FLUTTER_CODE' > lib/main.dart
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'dart:convert'; // مكتبة جيسون الأساسية اللي نسيناها
 
 void main() => runApp(const MirrorScorpion());
 
@@ -105,7 +114,7 @@ class MainScreen extends StatelessWidget {
 
   Widget _buildCard(BuildContext context, String title, IconData icon) {
     return InkWell(
-      onTap: () => print(title),
+      onTap: () => print("تم الضغط على: $title"),
       child: Container(
         decoration: BoxDecoration(
           color: const Color(0xFF161B22),
@@ -126,7 +135,7 @@ class MainScreen extends StatelessWidget {
 }
 FLUTTER_CODE
 
-# 3. إرسال التحديث لجيت هب
+# 4. رفع التحديث
 git add .
-git commit -m "Added AI dependencies and Project Structure"
+git commit -m "Integrated JSON support and Database assets"
 git push origin main

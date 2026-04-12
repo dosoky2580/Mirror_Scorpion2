@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'dart:convert'; // مكتبة جيسون الأساسية اللي نسيناها
 
 void main() => runApp(const MirrorScorpion());
 
@@ -70,7 +71,7 @@ class MainScreen extends StatelessWidget {
 
   Widget _buildCard(BuildContext context, String title, IconData icon) {
     return InkWell(
-      onTap: () => print(title),
+      onTap: () => print("تم الضغط على: $title"),
       child: Container(
         decoration: BoxDecoration(
           color: const Color(0xFF161B22),
