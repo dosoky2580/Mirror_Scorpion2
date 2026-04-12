@@ -16,7 +16,6 @@ jobs:
       - name: Reconstruct Project
         run: |
           flutter create . --project-name mirror_scorpion2 --org com.adham.mirror
-          # تعديل الـ SDK برمجياً داخل السيرفر
           sed -i 's/compileSdkVersion .*/compileSdkVersion 34/g' android/app/build.gradle
           flutter pub get
 

@@ -58,7 +58,7 @@ class _SoulCornerState extends State<SoulCorner> {
                       textAlign: TextAlign.right,
                     ),
                     subtitle: Padding(
-                      padding: const EdgeInsets.top(8.0),
+                      padding: const EdgeInsets.only(top: 8.0),
                       child: Text(
                         _hadiths[index]['source'],
                         style: const TextStyle(color: Colors.amberAccent),
