@@ -1,206 +1,45 @@
 #!/bin/bash
 cd ~/Mirror_Scorpion2
 
-# 1. تحديث الكود الأساسي ليدعم التنقل للكرت الأول
-cat << 'FLUTTER_CODE' > lib/main.dart
-import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'translator_page.dart';
+# 1. تحديث ملف المكتبات بإصدارات متوافقة (Fixing ML Kit Conflict)
+cat << 'PUBSPEC' > pubspec.yaml
+name: mirror_scorpion
+description: Mirror Scorpion AI Project by TetoCollctionWay
+version: 1.0.0+1
 
-void main() => runApp(const MirrorScorpion());
+environment:
+  sdk: '>=3.0.0 <4.0.0'
 
-class MirrorScorpion extends StatelessWidget {
-  const MirrorScorpion({super.key});
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        brightness: Brightness.dark,
-        scaffoldBackgroundColor: const Color(0xFF0A0E14),
-        textTheme: GoogleFonts.cairoTextTheme(Theme.of(context).textTheme),
-      ),
-      home: const MainScreen(),
-    );
-  }
-}
+dependencies:
+  flutter:
+    sdk: flutter
+  google_fonts: ^6.1.0
+  shared_preferences: ^2.2.2
+  intl: ^0.19.0
+  http: ^1.2.0
+  google_generative_ai: ^0.4.4
+  speech_to_text: ^6.6.1
+  flutter_tts: ^3.8.5
+  camera: ^0.10.5+9
+  google_mlkit_translation: ^0.12.0
+  google_mlkit_text_recognition: ^0.12.0
+  google_mlkit_commons: ^0.9.0
+  path_provider: ^2.1.2
+  share_plus: ^7.2.1
+  sqflite: ^2.3.0
+  flutter_spinkit: ^5.2.0
 
-class MainScreen extends StatelessWidget {
-  const MainScreen({super.key});
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: Column(
-          children: [
-            SizedBox(
-              height: MediaQuery.of(context).size.height * 0.25,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(Icons.security, size: 80, color: Colors.cyanAccent), 
-                  const SizedBox(height: 5),
-                  Opacity(
-                    opacity: 0.2,
-                    child: Transform(alignment: Alignment.center, transform: Matrix4.rotationX(3.14),
-                    child: const Icon(Icons.security, size: 60, color: Colors.cyanAccent)),
-                  ),
-                ],
-              ),
-            ),
-            Expanded(
-              child: GridView.count(
-                padding: const EdgeInsets.all(20),
-                crossAxisCount: 2,
-                crossAxisSpacing: 15,
-                mainAxisSpacing: 15,
-                children: [
-                  _buildCard(context, "ترجمة نصية", Icons.translate, const TranslatorPage()),
-                  _buildCard(context, "حوار مترجم", Icons.record_voice_over, null),
-                  _buildCard(context, "مستندات وعدسة", Icons.document_scanner, null),
-                  _buildCard(context, "أحاديث وقصص", Icons.auto_stories, null),
-                  _buildCard(context, "الألعاب", Icons.videogame_asset, null),
-                  _buildCard(context, "الإعدادات", Icons.settings, null),
-                ],
-              ),
-            ),
-            const Padding(
-              padding: EdgeInsets.all(10.0),
-              child: Text("TetoCollctionWay", style: TextStyle(color: Colors.grey, letterSpacing: 1.2)),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/data/
+    - assets/images/
+PUBSPEC
 
-  Widget _buildCard(BuildContext context, String title, IconData icon, Widget? target) {
-    return InkWell(
-      onTap: () {
-        if (target != null) {
-          Navigator.push(context, MaterialPageRoute(builder: (context) => target));
-        }
-      },
-      child: Container(
-        decoration: BoxDecoration(
-          color: const Color(0xFF161B22),
-          borderRadius: BorderRadius.circular(15),
-          border: Border.all(color: Colors.white10),
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(icon, size: 40, color: Colors.cyanAccent),
-            const SizedBox(height: 10),
-            Text(title, textAlign: TextAlign.center, style: const TextStyle(fontSize: 14)),
-          ],
-        ),
-      ),
-    );
-  }
-}
-FLUTTER_CODE
+# 2. التأكد من بقاء كود "الترجمة النصية" والواجهة الرئيسية
+# (الكود اللي كتبناه في الخطوة اللي فاتت هيفضل زي ما هو)
 
-# 2. إنشاء صفحة الترجمة النصية (الكرت الأول)
-cat << 'TRANSLATOR_CODE' > lib/translator_page.dart
-import 'package:flutter/material.dart';
-
-class TranslatorPage extends StatefulWidget {
-  const TranslatorPage({super.key});
-  @override
-  State<TranslatorPage> createState() => _TranslatorPageState();
-}
-
-class _TranslatorPageState extends State<TranslatorPage> {
-  final TextEditingController _inputController = TextEditingController();
-  final TextEditingController _outputController = TextEditingController();
-  String _selectedLang = "English";
-
-  void _clearOnNewInput() {
-    if (_outputController.text.isNotEmpty) {
-      setState(() {
-        _inputController.clear();
-        _outputController.clear();
-      });
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: const Color(0xFF161B22),
-        title: Center(
-          child: DropdownButton<String>(
-            value: _selectedLang,
-            items: List.generate(100, (index) => "Language ${index+1}") // مثال للـ 100 لغة
-                .map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
-            onChanged: (v) => setState(() => _selectedLang = v!),
-          ),
-        ),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(15.0),
-        child: Column(
-          children: [
-            // المحرر العلوي
-            Expanded(
-              child: Container(
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(color: const Color(0xFF161B22), borderRadius: BorderRadius.circular(15)),
-                child: Stack(
-                  children: [
-                    TextField(
-                      controller: _inputController,
-                      maxLines: null,
-                      decoration: const InputDecoration(hintText: "اكتب هنا...", border: InputBorder.none),
-                      onTap: _clearOnNewInput,
-                    ),
-                    Positioned(
-                      bottom: 0, left: 0,
-                      child: IconButton(icon: const Icon(Icons.mic, color: Colors.cyanAccent), onPressed: () {}),
-                    )
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(height: 20),
-            // المحرر السفلي
-            Expanded(
-              child: Container(
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(color: const Color(0xFF1C2128), borderRadius: BorderRadius.circular(15)),
-                child: Stack(
-                  children: [
-                    TextField(
-                      controller: _outputController,
-                      readOnly: true,
-                      maxLines: null,
-                      decoration: const InputDecoration(hintText: "الترجمة ستظهر هنا...", border: InputBorder.none),
-                    ),
-                    Positioned(
-                      bottom: 0, right: 0,
-                      child: Row(
-                        children: [
-                          IconButton(icon: const Icon(Icons.volume_up), onPressed: () {}),
-                          IconButton(icon: const Icon(Icons.share), onPressed: () {}),
-                          IconButton(icon: const Icon(Icons.copy), onPressed: () {}),
-                        ],
-                      ),
-                    )
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-TRANSLATOR_CODE
-
-# 3. الرفع التلقائي
+# 3. الرفع التلقائي لحل المشكلة
 git add .
-git commit -m "Translator Card: Fully built according to Scorpion specs"
+git commit -m "Fix: Resolved ML Kit version conflict in pubspec.yaml"
 git push origin main
