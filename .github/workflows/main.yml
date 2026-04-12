@@ -13,12 +13,12 @@ jobs:
         with:
           channel: 'stable'
 
-      - name: Final Build
+      - name: Final Surgical Fix
         run: |
           rm -rf android build .dart_tool pubspec.lock
           flutter create . --project-name mirror_scorpion2 --org com.adham.mirror
           
-          # إعدادات البناء المستقرة
+          # إعدادات البناء المستقرة (SDK 34)
           cat << 'INNER_EOF' > android/app/build.gradle.kts
           plugins {
               id("com.android.application")
