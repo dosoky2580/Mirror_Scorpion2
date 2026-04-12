@@ -1,18 +1,25 @@
-name: mirror_scorpion2
-description: Adham Mirror Project 2026
-publish_to: 'none'
+name: mirror_scorpion
+description: Mirror Scorpion AI Project by TetoCollctionWay
 version: 1.0.0+1
+
 environment:
   sdk: '>=3.0.0 <4.0.0'
+
 dependencies:
   flutter:
     sdk: flutter
-  google_fonts: ^6.2.1
+  google_fonts: ^6.1.0
   shared_preferences: ^2.2.2
-  intl: ^0.20.2
-  flutter_local_notifications: ^17.0.0
-dev_dependencies:
-  flutter_test:
-    sdk: flutter
+  intl: ^0.19.0
+  http: ^1.2.0
+  google_generative_ai: ^0.2.0
+  speech_to_text: ^6.6.0
+  flutter_tts: ^3.8.5
+  camera: ^0.10.5+5
+  google_mlkit_translation: ^0.11.0
+  google_mlkit_text_recognition: ^0.11.0
+  path_provider: ^2.1.2
+  share_plus: ^7.2.1
+
 flutter:
   uses-material-design: true

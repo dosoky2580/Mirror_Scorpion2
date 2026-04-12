@@ -36,11 +36,8 @@ class MainScreen extends StatelessWidget {
                   const SizedBox(height: 5),
                   Opacity(
                     opacity: 0.2,
-                    child: Transform(
-                      alignment: Alignment.center,
-                      transform: Matrix4.rotationX(3.14),
-                      child: const Icon(Icons.security, size: 60, color: Colors.cyanAccent),
-                    ),
+                    child: Transform(alignment: Alignment.center, transform: Matrix4.rotationX(3.14),
+                    child: const Icon(Icons.security, size: 60, color: Colors.cyanAccent)),
                   ),
                 ],
               ),

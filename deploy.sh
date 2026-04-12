@@ -1,11 +1,37 @@
 #!/bin/bash
-# الانتقال لمجلد المشروع
 cd ~/Mirror_Scorpion2
 
-# التأكد من وجود مجلد lib
-mkdir -p lib
+# 1. إنشاء ملف المكتبات (pubspec.yaml)
+cat << 'PUBSPEC' > pubspec.yaml
+name: mirror_scorpion
+description: Mirror Scorpion AI Project by TetoCollctionWay
+version: 1.0.0+1
 
-# كتابة كود فلاتر داخل ملف main.dart
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  google_fonts: ^6.1.0
+  shared_preferences: ^2.2.2
+  intl: ^0.19.0
+  http: ^1.2.0
+  google_generative_ai: ^0.2.0
+  speech_to_text: ^6.6.0
+  flutter_tts: ^3.8.5
+  camera: ^0.10.5+5
+  google_mlkit_translation: ^0.11.0
+  google_mlkit_text_recognition: ^0.11.0
+  path_provider: ^2.1.2
+  share_plus: ^7.2.1
+
+flutter:
+  uses-material-design: true
+PUBSPEC
+
+# 2. إنشاء مجلد lib وكتابة الكود (الهيكل الأساسي)
+mkdir -p lib
 cat << 'FLUTTER_CODE' > lib/main.dart
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -45,11 +71,8 @@ class MainScreen extends StatelessWidget {
                   const SizedBox(height: 5),
                   Opacity(
                     opacity: 0.2,
-                    child: Transform(
-                      alignment: Alignment.center,
-                      transform: Matrix4.rotationX(3.14),
-                      child: const Icon(Icons.security, size: 60, color: Colors.cyanAccent),
-                    ),
+                    child: Transform(alignment: Alignment.center, transform: Matrix4.rotationX(3.14),
+                    child: const Icon(Icons.security, size: 60, color: Colors.cyanAccent)),
                   ),
                 ],
               ),
@@ -103,7 +126,7 @@ class MainScreen extends StatelessWidget {
 }
 FLUTTER_CODE
 
-# إرسال التحديث لجيت هب
+# 3. إرسال التحديث لجيت هب
 git add .
-git commit -m "Mirror Scorpion UI: Core structure built via Termux"
+git commit -m "Added AI dependencies and Project Structure"
 git push origin main
