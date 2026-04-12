@@ -13,10 +13,11 @@ jobs:
         with:
           flutter-version: '3.16.0'
 
-      - name: Reconstruct Project On Server
+      - name: Reconstruct Project
         run: |
-          # هنا السيرفر هيخلق مجلد الأندرويد الرسمي اللي مش موجود عندك
-          flutter create . --project-name mirror_scorpion2 --platforms android --org com.adham.mirror
+          flutter create . --project-name mirror_scorpion2 --org com.adham.mirror
+          # تعديل الـ SDK برمجياً داخل السيرفر
+          sed -i 's/compileSdkVersion .*/compileSdkVersion 34/g' android/app/build.gradle
           flutter pub get
 
       - name: Build Secure APK
