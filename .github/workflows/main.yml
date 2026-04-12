@@ -13,16 +13,12 @@ jobs:
         with:
           channel: 'stable'
 
-      - name: Hard Reset & Build
+      - name: Final Build
         run: |
-          # مسح كاش المكتبات على السيرفر تماماً
-          rm -rf /home/runner/.pub-cache
           rm -rf android build .dart_tool pubspec.lock
-          
-          # إنشاء المشروع
           flutter create . --project-name mirror_scorpion2 --org com.adham.mirror
           
-          # إعدادات SDK 34 المستقرة
+          # إعدادات البناء المستقرة
           cat << 'INNER_EOF' > android/app/build.gradle.kts
           plugins {
               id("com.android.application")
@@ -58,6 +54,7 @@ jobs:
           }
           INNER_EOF
           
+          flutter pub upgrade flutter_local_notifications
           flutter pub get
           
       - name: Build Secure APK
