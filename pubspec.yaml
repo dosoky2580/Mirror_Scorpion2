@@ -1,0 +1,36 @@
+name: mirror_scorpion2
+description: "The rebirth of Scorpion Mirror - Built for 2026"
+version: 1.0.0+1
+publish_to: 'none'
+
+environment:
+  sdk: '>=3.2.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  
+  # المكتبات الأساسية المختارة بعناية لضمان التوافق
+  sqflite: ^2.3.0
+  path_provider: ^2.1.1
+  flutter_local_notifications: ^16.3.0
+  timezone: ^0.9.2
+  intl: ^0.18.1
+  shared_preferences: ^2.2.2
+  google_fonts: ^6.1.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+
+flutter:
+  uses-material-design: true
+  
+  # تعريف المسارات اللي عملناها في الخطوة الأولى
+  assets:
+    - assets/images/
+    - assets/data/
+    - assets/audio/
