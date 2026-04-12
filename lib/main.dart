@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'dart:convert'; // مكتبة جيسون الأساسية اللي نسيناها
+import 'translator_page.dart';
 
 void main() => runApp(const MirrorScorpion());
 
@@ -50,12 +50,12 @@ class MainScreen extends StatelessWidget {
                 crossAxisSpacing: 15,
                 mainAxisSpacing: 15,
                 children: [
-                  _buildCard(context, "ترجمة نصية", Icons.translate),
-                  _buildCard(context, "حوار مترجم", Icons.record_voice_over),
-                  _buildCard(context, "مستندات وعدسة", Icons.document_scanner),
-                  _buildCard(context, "أحاديث وقصص", Icons.auto_stories),
-                  _buildCard(context, "الألعاب", Icons.videogame_asset),
-                  _buildCard(context, "الإعدادات", Icons.settings),
+                  _buildCard(context, "ترجمة نصية", Icons.translate, const TranslatorPage()),
+                  _buildCard(context, "حوار مترجم", Icons.record_voice_over, null),
+                  _buildCard(context, "مستندات وعدسة", Icons.document_scanner, null),
+                  _buildCard(context, "أحاديث وقصص", Icons.auto_stories, null),
+                  _buildCard(context, "الألعاب", Icons.videogame_asset, null),
+                  _buildCard(context, "الإعدادات", Icons.settings, null),
                 ],
               ),
             ),
@@ -69,9 +69,13 @@ class MainScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildCard(BuildContext context, String title, IconData icon) {
+  Widget _buildCard(BuildContext context, String title, IconData icon, Widget? target) {
     return InkWell(
-      onTap: () => print("تم الضغط على: $title"),
+      onTap: () {
+        if (target != null) {
+          Navigator.push(context, MaterialPageRoute(builder: (context) => target));
+        }
+      },
       child: Container(
         decoration: BoxDecoration(
           color: const Color(0xFF161B22),
