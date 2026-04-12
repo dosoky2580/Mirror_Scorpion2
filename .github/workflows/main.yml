@@ -11,13 +11,14 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.16.0'
+          channel: 'stable' # هيجيب أحدث نسخة مستقرة 2026
 
       - name: Reconstruct Project
         run: |
           flutter create . --project-name mirror_scorpion2 --org com.adham.mirror
+          # رفع الـ SDK عشان يتوافق مع أحدث نسخة
           sed -i 's/compileSdkVersion .*/compileSdkVersion 34/g' android/app/build.gradle
-          flutter pub get
+          flutter pub upgrade # تحديث المكتبات لأقصى توافق
 
       - name: Build Secure APK
         run: flutter build apk --debug
