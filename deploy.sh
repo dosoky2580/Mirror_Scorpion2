@@ -1,44 +1,17 @@
 #!/bin/bash
 cd ~/Mirror_Scorpion2
 
-# 1. تحديث المكتبات لأحدث إصدارات مستقرة تتوافق مع Android 35
-cat << 'PUBSPEC' > pubspec.yaml
-name: mirror_scorpion
-description: Mirror Scorpion AI Project by TetoCollctionWay
-version: 1.0.0+1
+# 1. تحديث ملف الخصائص لإجبار الفريمورك على استخدام SDK 36
+cat << 'PROPERTIES' > android/local.properties
+flutter.sdk=/usr/local/lib/forty/flutter
+flutter.buildMode=debug
+flutter.versionName=1.0.0
+flutter.versionCode=1
+flutter.compileSdkVersion=36
+flutter.targetSdkVersion=36
+PROPERTIES
 
-environment:
-  sdk: '>=3.0.0 <4.0.0'
-
-dependencies:
-  flutter:
-    sdk: flutter
-  google_fonts: ^6.1.0
-  shared_preferences: ^2.2.2
-  intl: ^0.19.0
-  http: ^1.2.0
-  google_generative_ai: ^0.4.4
-  speech_to_text: ^6.6.2  # العودة للأحدث مع ضبط الأندرويد
-  flutter_tts: ^4.2.2
-  camera: ^0.11.0
-  google_mlkit_translation: ^0.12.0
-  google_mlkit_text_recognition: ^0.14.0
-  google_mlkit_commons: ^0.9.0
-  path_provider: ^2.1.2
-  share_plus: ^10.1.0
-  sqflite: ^2.3.0
-  flutter_spinkit: ^5.2.1
-
-flutter:
-  uses-material-design: true
-  assets:
-    - assets/data/
-    - assets/images/
-PUBSPEC
-
-# 2. ضبط ملف android/app/build.gradle لرفع الـ SDK لـ 35
-# هذا الجزء هو "المفتاح" لحل كل التحذيرات اللي ظهرت في جيت هب
-mkdir -p android/app
+# 2. إعادة كتابة build.gradle بمواصفات "المسطرة" النهائية
 cat << 'APP_GRADLE' > android/app/build.gradle
 def localProperties = new Properties()
 def localPropertiesFile = rootProject.file('local.properties')
@@ -54,29 +27,28 @@ apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
 android {
     namespace "com.tetocollctionway.mirror_scorpion"
-    compileSdkVersion 35  // رفع التوافق لـ 35
+    compileSdkVersion 36 // رفعنا السقف لـ 36 لضمان التوافق التام
 
     defaultConfig {
         applicationId "com.tetocollctionway.mirror_scorpion"
         minSdkVersion 21
-        targetSdkVersion 35
+        targetSdkVersion 36
         versionCode 1
         versionName "1.0"
     }
 
-    buildTypes {
-        release {
-            signingConfig signingConfigs.debug
-        }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
-}
 
-dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
 }
 APP_GRADLE
 
 # 3. الرفع التلقائي
 git add .
-git commit -m "Fix: Upgraded Android SDK to 35 and resolved namespace issues"
+git commit -m "Fix: Hard-coded SDK 36 in build.gradle and local.properties to satisfy Camera dependency"
 git push origin main

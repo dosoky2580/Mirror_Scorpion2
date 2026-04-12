@@ -12,23 +12,22 @@ apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
 android {
     namespace "com.tetocollctionway.mirror_scorpion"
-    compileSdkVersion 35  // رفع التوافق لـ 35
+    compileSdkVersion 36 // رفعنا السقف لـ 36 لضمان التوافق التام
 
     defaultConfig {
         applicationId "com.tetocollctionway.mirror_scorpion"
         minSdkVersion 21
-        targetSdkVersion 35
+        targetSdkVersion 36
         versionCode 1
         versionName "1.0"
     }
 
-    buildTypes {
-        release {
-            signingConfig signingConfigs.debug
-        }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
-}
 
-dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
 }
