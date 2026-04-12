@@ -13,20 +13,46 @@ jobs:
         with:
           channel: 'stable'
 
-      - name: Final Surgical Fix
+      - name: Surgical Reconstruction
         run: |
           rm -rf android build .dart_tool
           flutter create . --project-name mirror_scorpion2 --org com.adham.mirror
           
-          # إعدادات الـ SDK لعام 2026
-          sed -i 's/compileSdk = .*/compileSdk = 36/g' android/app/build.gradle.kts
-          sed -i 's/minSdk = .*/minSdk = 24/g' android/app/build.gradle.kts
-          
-          # تفعيل خاصية Desugaring في خيارات الكومبايلر (الحل الجذري)
-          sed -i '/compileOptions {/a \        isCoreLibraryDesugaringEnabled = true' android/app/build.gradle.kts
-          
-          # إضافة المكتبة المطلوبة تحت بند الـ dependencies
-          sed -i '/dependencies {/a \    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")' android/app/build.gradle.kts
+          # كتابة ملف build.gradle.kts من الصفر لضمان التوافق
+          cat << 'INNER_EOF' > android/app/build.gradle.kts
+          plugins {
+              id("com.android.application")
+              id("kotlin-android")
+              id("dev.flutter.flutter-gradle-plugin")
+          }
+
+          android {
+              namespace = "com.adham.mirror.mirror_scorpion2"
+              compileSdk = 36
+
+              compileOptions {
+                  sourceCompatibility = JavaVersion.VERSION_1_8
+                  targetCompatibility = JavaVersion.VERSION_1_8
+                  isCoreLibraryDesugaringEnabled = true
+              }
+
+              kotlinOptions {
+                  jvmTarget = "1.8"
+              }
+
+              defaultConfig {
+                  applicationId = "com.adham.mirror.mirror_scorpion2"
+                  minSdk = 24
+                  targetSdk = 36
+                  versionCode = 1
+                  versionName = "1.0"
+              }
+          }
+
+          dependencies {
+              coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
+          }
+          INNER_EOF
           
           flutter pub get
           
