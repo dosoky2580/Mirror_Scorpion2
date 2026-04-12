@@ -13,19 +13,22 @@ jobs:
         with:
           channel: 'stable'
 
-      - name: Absolute Project Rebuild
+      - name: Ultimate Project Fix
         run: |
           rm -rf android build .dart_tool
           flutter create . --project-name mirror_scorpion2 --org com.adham.mirror
           
-          # رفع الـ SDK لنسخة 36 وتفعيل دعم مكتبات جافا القديمة (Desugaring)
+          # إعدادات الأندرويد لعام 2026
           sed -i 's/compileSdk = .*/compileSdk = 36/g' android/app/build.gradle.kts
           sed -i 's/minSdk = .*/minSdk = 24/g' android/app/build.gradle.kts
           
-          # إضافة مكتبة الدعم المطلوبة للإشعارات
+          # تفعيل Desugaring لحل مشكلة الإشعارات
           sed -i '/dependencies {/a \    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")' android/app/build.gradle.kts
           
+          # تنظيف وجلب المكتبات بنسخها الجديدة
+          flutter pub cache clean -f
           flutter pub get
+          flutter pub upgrade --major-versions
           
       - name: Build Secure APK
         run: flutter build apk --debug
