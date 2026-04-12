@@ -1,7 +1,7 @@
 #!/bin/bash
 cd ~/Mirror_Scorpion2
 
-# 1. تحديث ملف المكتبات بإصدارات متوافقة (Fixing ML Kit Conflict)
+# 1. تحديث ملف المكتبات بإصدارات "المسطرة" المتوافقة تماماً
 cat << 'PUBSPEC' > pubspec.yaml
 name: mirror_scorpion
 description: Mirror Scorpion AI Project by TetoCollctionWay
@@ -22,7 +22,7 @@ dependencies:
   flutter_tts: ^3.8.5
   camera: ^0.10.5+9
   google_mlkit_translation: ^0.12.0
-  google_mlkit_text_recognition: ^0.12.0
+  google_mlkit_text_recognition: ^0.14.0
   google_mlkit_commons: ^0.9.0
   path_provider: ^2.1.2
   share_plus: ^7.2.1
@@ -36,10 +36,9 @@ flutter:
     - assets/images/
 PUBSPEC
 
-# 2. التأكد من بقاء كود "الترجمة النصية" والواجهة الرئيسية
-# (الكود اللي كتبناه في الخطوة اللي فاتت هيفضل زي ما هو)
+# 2. التأكد من سلامة ملفات الكود (لا تغيير فيها)
 
-# 3. الرفع التلقائي لحل المشكلة
+# 3. الرفع التلقائي
 git add .
-git commit -m "Fix: Resolved ML Kit version conflict in pubspec.yaml"
+git commit -m "Fix: Final resolution for ML Kit dependency conflict"
 git push origin main
