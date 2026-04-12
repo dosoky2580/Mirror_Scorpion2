@@ -13,18 +13,14 @@ jobs:
         with:
           channel: 'stable'
 
-      - name: Force Clean Build
+      - name: Stable Build Reconstruction
         run: |
-          # مسح الكاش والملفات القديمة تماماً
           rm -rf android build .dart_tool pubspec.lock
           
-          # تعديل ملف pubspec.yaml يدوياً للتأكد من الإصدار المستقر
-          sed -i 's/flutter_local_notifications: .*/flutter_local_notifications: 16.1.0/g' pubspec.yaml
-          
-          # إعادة إنشاء ملفات الأندرويد
+          # إنشاء المشروع من جديد
           flutter create . --project-name mirror_scorpion2 --org com.adham.mirror
           
-          # إعادة كتابة الإعدادات الصحيحة (SDK 36 & NDK 28)
+          # كتابة إعدادات مستقرة تماماً (SDK 34) لضمان توافق المكتبات
           cat << 'INNER_EOF' > android/app/build.gradle.kts
           plugins {
               id("com.android.application")
@@ -34,8 +30,7 @@ jobs:
 
           android {
               namespace = "com.adham.mirror.mirror_scorpion2"
-              compileSdk = 36
-              ndkVersion = "28.2.13676358"
+              compileSdk = 34 // العودة للنسخة المستقرة لحل مشكلة الإشعارات
 
               compileOptions {
                   sourceCompatibility = JavaVersion.VERSION_1_8
@@ -50,7 +45,7 @@ jobs:
               defaultConfig {
                   applicationId = "com.adham.mirror.mirror_scorpion2"
                   minSdk = 24
-                  targetSdk = 36
+                  targetSdk = 34
                   versionCode = 1
                   versionName = "1.0"
               }
