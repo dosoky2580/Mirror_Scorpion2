@@ -1,4 +1,4 @@
-name: Scorpion Build Engine V2
+name: Scorpion Remote Engine
 on:
   push:
     branches: [ main ]
@@ -12,13 +12,15 @@ jobs:
         uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.16.0'
-          channel: 'stable'
 
-      - name: Production Ready Build
+      - name: Reconstruct Project On Server
         run: |
-          flutter clean
+          # هنا السيرفر هيخلق مجلد الأندرويد الرسمي اللي مش موجود عندك
+          flutter create . --platforms android --org com.adham.mirror
           flutter pub get
-          flutter build apk --debug
+
+      - name: Build Secure APK
+        run: flutter build apk --debug
           
       - name: Export Scorpion APK
         uses: actions/upload-artifact@v4
