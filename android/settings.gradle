@@ -24,5 +24,18 @@ plugins {
 
 include ":app"
 
-// السطر اللي كان ناقص وهو اللي بيعرف جرايدل بمكان المكتبات
-apply from: "${new File(settingsDir, 'local.properties').with { p -> p.load(it.newDataInputStream()); p.getProperty('flutter.sdk') }}/packages/flutter_tools/gradle/app_plugin_loader.gradle"
+// التصحيح: استدعاء المترجم بدون استخدام 'it' الغامضة
+def localProperties = new Properties()
+def localPropertiesFile = new File(settingsDir, "local.properties")
+if (localPropertiesFile.exists()) {
+    localPropertiesFile.withInputStream { stream ->
+        localProperties.load(stream)
+    }
+}
+
+def sdkPath = localProperties.getProperty("flutter.sdk")
+if (sdkPath == null) {
+    throw new GradleException("Flutter SDK not found. Define location with flutter.sdk in local.properties file.")
+}
+
+apply from: "$sdkPath/packages/flutter_tools/gradle/app_plugin_loader.gradle"
