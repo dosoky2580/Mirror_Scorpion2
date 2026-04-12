@@ -14,14 +14,14 @@ jobs:
           flutter-version: '3.16.0'
           channel: 'stable'
 
-      - name: Get Dependencies
-        run: flutter pub get
-
-      - name: Build APK
-        run: flutter build apk --debug
-
-      - name: Upload Artifact
+      - name: Production Ready Build
+        run: |
+          flutter clean
+          flutter pub get
+          flutter build apk --debug
+          
+      - name: Export Scorpion APK
         uses: actions/upload-artifact@v4
         with:
-          name: Mirror-Scorpion2-Debug
+          name: Mirror-Scorpion2-Final
           path: build/app/outputs/flutter-apk/app-debug.apk
