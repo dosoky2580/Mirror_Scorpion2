@@ -1,8 +1,3 @@
-#!/bin/bash
-cd ~/Mirror_Scorpion2
-
-# 1. إنشاء صفحة "حوار مترجم" (الكرت الثاني)
-cat << 'DIALOGUE_CODE' > lib/dialogue_page.dart
 import 'package:flutter/material.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 import 'package:flutter_tts/flutter_tts.dart';
@@ -142,13 +137,3 @@ class _DialoguePageState extends State<DialoguePage> {
     );
   }
 }
-DIALOGUE_CODE
-
-# 2. تحديث الشاشة الرئيسية لربط الكرت الثاني
-sed -i 's|_buildCard(context, "حوار مترجم", Icons.record_voice_over, null)|_buildCard(context, "حوار مترجم", Icons.record_voice_over, const DialoguePage())|g' lib/main.dart
-sed -i "1i import 'dialogue_page.dart';" lib/main.dart
-
-# 3. الرفع التلقائي
-git add .
-git commit -m "Dialogue Card: Implemented Right-hand logic and Swap feature"
-git push origin main

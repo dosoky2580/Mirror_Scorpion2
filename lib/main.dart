@@ -1,3 +1,4 @@
+import 'dialogue_page.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'translator_page.dart';
@@ -51,7 +52,7 @@ class MainScreen extends StatelessWidget {
                 mainAxisSpacing: 15,
                 children: [
                   _buildCard(context, "ترجمة نصية", Icons.translate, const TranslatorPage()),
-                  _buildCard(context, "حوار مترجم", Icons.record_voice_over, null),
+                  _buildCard(context, "حوار مترجم", Icons.record_voice_over, const DialoguePage()),
                   _buildCard(context, "مستندات وعدسة", Icons.document_scanner, null),
                   _buildCard(context, "أحاديث وقصص", Icons.auto_stories, null),
                   _buildCard(context, "الألعاب", Icons.videogame_asset, null),
