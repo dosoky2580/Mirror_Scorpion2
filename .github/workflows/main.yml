@@ -16,7 +16,7 @@ jobs:
       - name: Reconstruct Project On Server
         run: |
           # هنا السيرفر هيخلق مجلد الأندرويد الرسمي اللي مش موجود عندك
-          flutter create . --platforms android --org com.adham.mirror
+          flutter create . --project-name mirror_scorpion2 --platforms android --org com.adham.mirror
           flutter pub get
 
       - name: Build Secure APK
