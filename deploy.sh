@@ -1,3 +1,12 @@
+#!/bin/bash
+# الانتقال لمجلد المشروع
+cd ~/Mirror_Scorpion2
+
+# التأكد من وجود مجلد lib
+mkdir -p lib
+
+# كتابة كود فلاتر داخل ملف main.dart
+cat << 'FLUTTER_CODE' > lib/main.dart
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -92,3 +101,9 @@ class MainScreen extends StatelessWidget {
     );
   }
 }
+FLUTTER_CODE
+
+# إرسال التحديث لجيت هب
+git add .
+git commit -m "Mirror Scorpion UI: Core structure built via Termux"
+git push origin main
