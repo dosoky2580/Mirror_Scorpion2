@@ -1,51 +1,51 @@
 #!/bin/bash
 cd ~/Mirror_Scorpion2
 
-# 1. تنظيف شامل ومسح الكاش
-flutter clean
+# 1. إنشاء/تعديل ملف أوامر جيت هب (المدير الحقيقي)
+mkdir -p .github/workflows
+cat << 'WORKFLOW' > .github/workflows/main.yml
+name: Scorpion Remote Engine
 
-# 2. عملية "البحث والاستبدال" الشاملة (Global Replace)
-# السطر ده بيدور في كل الملفات اللي بتنتهي بـ .gradle أو .properties أو .yaml
-# وبيرغمها تتحول من 34 لـ 36 غصب عن أي إعدادات مخفية
-find . -type f \( -name "*.gradle" -o -name "*.yaml" -o -name "*.properties" \) -exec sed -i 's/compileSdkVersion 34/compileSdkVersion 36/g' {} +
-find . -type f \( -name "*.gradle" -o -name "*.yaml" -o -name "*.properties" \) -exec sed -i 's/targetSdkVersion 34/targetSdkVersion 36/g' {} +
-find . -type f \( -name "*.gradle" -o -name "*.yaml" -o -name "*.properties" \) -exec sed -i 's/compileSdk = 34/compileSdk = 36/g' {} +
-find . -type f \( -name "*.gradle" -o -name "*.yaml" -o -name "*.properties" \) -exec sed -i 's/targetSdk = 34/targetSdk = 36/g' {} +
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
-# 3. إجبار إصدار الـ Gradle والـ Kotlin على أحدث مستويات التوافق
-cat << 'ROOT_GRADLE' > android/build.gradle
-buildscript {
-    ext.kotlin_version = '1.9.10'
-    repositories {
-        google()
-        mavenCentral()
-    }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:8.1.1'
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-    }
-}
+jobs:
+  build:
+    runs-on: ubuntu-latest
 
-allprojects {
-    repositories {
-        google()
-        mavenCentral()
-    }
-}
-ROOT_GRADLE
+    steps:
+      - uses: actions/checkout@v3
 
-# 4. ملف الخصائص النهائي لفرض السيطرة على الـ 6 كروت
-cat << 'GPROPS' > android/gradle.properties
-org.gradle.jvmargs=-Xmx4G
-android.useAndroidX=true
-android.enableJetifier=true
-flutter.compileSdkVersion=36
-flutter.targetSdkVersion=36
-flutter.minSdkVersion=21
-android.ndkVersion=28.2.13676358
-GPROPS
+      - name: Set up Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: '17'
 
-# 5. الرفع النهائي
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.19.0' # إصدار حديث يدعم SDK 36
+
+      - name: Install Android SDK 36
+        run: |
+          echo "y" | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --install "platforms;android-36" "build-tools;36.0.0"
+
+      - name: Install Dependencies
+        run: flutter pub get
+
+      - name: Build APK
+        run: flutter build apk --debug --target-platform android-arm64 --extra-gen-snapshot-options=--deterministic
+WORKFLOW
+
+# 2. التأكيد على ملفات الأندرويد الداخلية تكراراً
+sed -i 's/compileSdkVersion 34/compileSdkVersion 36/g' android/app/build.gradle
+sed -i 's/targetSdkVersion 34/targetSdkVersion 36/g' android/app/build.gradle
+
+# 3. الرفع النهائي
 git add .
-git commit -m "Global Overwrite: Erased SDK 34 from all files and forced SDK 36/NDK 28 for ultimate stability"
+git commit -m "Engine Fix: Updated GitHub Workflow to support Android SDK 36 for all 6 cards"
 git push origin main
