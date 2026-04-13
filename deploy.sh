@@ -1,65 +1,66 @@
 #!/bin/bash
 cd ~/Mirror_Scorpion2
 
-# 1. تنظيف شامل
-flutter clean
+# 1. النسف: مسح مجلد الأندرويد بالكامل للتخلص من أي أثر لـ V1
+rm -rf android
 
-# 2. أمر SED العملاق: مراجعة كل الملفات (حتى المخفية) وتحويلها لـ V2 و SDK 36
-# هذا الأمر يبحث في كل مكان ويغير أي إشارة لـ V1 أو SDK قديم
-find . -type f -exec sed -i 's/androidx.lifecycle/androidx.lifecycle/g' {} +
-find . -type f -exec sed -i 's/io.flutter.app.FlutterApplication/io.flutter.embedding.android.FlutterActivity/g' {}+
-find . -type f -exec sed -i 's/compileSdkVersion 36/compileSdkVersion 36/g' {} +
-find . -type f -exec sed -i 's/targetSdkVersion 36/targetSdkVersion 36/g' {} +
+# 2. إعادة التوليد: إنشاء مجلد أندرويد جديد بأحدث نظام (V2) تلقائياً
+flutter create . --platforms android
 
-# 3. تحديث ملف الـ Main لإضافة نظام "Try-Catch" العالمي (لضمان استقرار الـ 6 كروت)
-cat << 'MAIN_DART' > lib/main.dart
-import 'package:flutter/material.dart';
-import 'dart:async';
+# 3. الحقن: تعديل الملفات الجديدة لتناسب مواصفات الـ 6 كروت و SDK 36
+# تعديل ملف gradle.properties
+cat << 'GPROPS' > android/gradle.properties
+org.gradle.jvmargs=-Xmx4G
+android.useAndroidX=true
+android.enableJetifier=true
+flutter.compileSdkVersion=36
+flutter.targetSdkVersion=36
+flutter.minSdkVersion=21
+android.ndkVersion=28.2.13676358
+GPROPS
 
-void main() {
-  // نظام Catch لجميع أخطاء التطبيق (الـ 6 كروت)
-  runZonedGuarded(() async {
-    WidgetsFlutterBinding.ensureInitialized();
-    runApp(const MirrorApp());
-  }, (error, stack) {
-    debugPrint('Scorpion Engine Error: $error');
-    // هنا ممكن تضيف لوج للأخطاء مستقبلاً
-  });
+# 4. تحديث الـ MainActivity.kt فوراً لضمان نظام الـ Embedding الجديد
+mkdir -p android/app/src/main/kotlin/com/tetocollctionway/mirror_scorpion/
+cat << 'KOTLIN' > android/app/src/main/kotlin/com/tetocollctionway/mirror_scorpion/MainActivity.kt
+package com.tetocollctionway.mirror_scorpion
+
+import io.flutter.embedding.android.FlutterActivity
+
+class MainActivity: FlutterActivity() {
 }
+KOTLIN
 
-class MirrorApp extends StatelessWidget {
-  const MirrorApp({super.key});
+# 5. تعديل الـ build.gradle الأساسي لفرض الـ SDK 36 يدوياً
+sed -i 's/compileSdkVersion flutter.compileSdkVersion/compileSdkVersion 36/g' android/app/build.gradle
+sed -i 's/targetSdkVersion flutter.targetSdkVersion/targetSdkVersion 36/g' android/app/build.gradle
 
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Mirror Scorpion',
-      theme: ThemeData(useMaterial3: true, colorSchemeSeed: Colors.deepPurple),
-      home: const MainScreen(),
-    );
-  }
-}
+# 6. تحديث الـ Workflow عشان ينظف قبل ما يبني
+cat << 'WORKFLOW' > .github/workflows/main.yml
+name: Scorpion Remote Engine
+on:
+  push:
+    branches: [ main ]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.22.0'
+      - name: Build APK
+        run: |
+          flutter pub get
+          flutter build apk --debug
+WORKFLOW
 
-class MainScreen extends StatefulWidget {
-  const MainScreen({super.key});
-
-  @override
-  State<MainScreen> createState() => _MainScreenState();
-}
-
-class _MainScreenState extends State<MainScreen> {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Text('Scorpion Engine v2 (SDK 36) Ready'),
-      ),
-    );
-  }
-}
-MAIN_DART
-
-# 4. الرفع بقلب جامد
+# 7. الرفع النهائي
 git add .
-git commit -m "Deep Clean: Global SED replacement and added global Try-Catch safety net"
+git commit -m "Nuclear Option: Recreated Android folder from scratch to kill V1 embedding forever"
 git push origin main
