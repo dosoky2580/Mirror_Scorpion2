@@ -3,8 +3,6 @@ name: Scorpion Remote Engine
 on:
   push:
     branches: [ main ]
-  pull_request:
-    branches: [ main ]
 
 jobs:
   build:
@@ -22,7 +20,8 @@ jobs:
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.19.0' # إصدار حديث يدعم SDK 36
+          # استخدام أحدث نسخة مستقرة لضمان توافق Dart 3.4+
+          flutter-version: '3.22.0' 
 
       - name: Install Android SDK 36
         run: |
@@ -32,4 +31,4 @@ jobs:
         run: flutter pub get
 
       - name: Build APK
-        run: flutter build apk --debug --target-platform android-arm64 --extra-gen-snapshot-options=--deterministic
+        run: flutter build apk --debug

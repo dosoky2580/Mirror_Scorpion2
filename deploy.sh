@@ -1,15 +1,13 @@
 #!/bin/bash
 cd ~/Mirror_Scorpion2
 
-# 1. إنشاء/تعديل ملف أوامر جيت هب (المدير الحقيقي)
+# 1. تحديث ملف أوامر جيت هب لأحدث إصدار فلاتر مستقر
 mkdir -p .github/workflows
 cat << 'WORKFLOW' > .github/workflows/main.yml
 name: Scorpion Remote Engine
 
 on:
   push:
-    branches: [ main ]
-  pull_request:
     branches: [ main ]
 
 jobs:
@@ -28,7 +26,8 @@ jobs:
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.19.0' # إصدار حديث يدعم SDK 36
+          # استخدام أحدث نسخة مستقرة لضمان توافق Dart 3.4+
+          flutter-version: '3.22.0' 
 
       - name: Install Android SDK 36
         run: |
@@ -38,14 +37,13 @@ jobs:
         run: flutter pub get
 
       - name: Build APK
-        run: flutter build apk --debug --target-platform android-arm64 --extra-gen-snapshot-options=--deterministic
+        run: flutter build apk --debug
 WORKFLOW
 
-# 2. التأكيد على ملفات الأندرويد الداخلية تكراراً
-sed -i 's/compileSdkVersion 34/compileSdkVersion 36/g' android/app/build.gradle
-sed -i 's/targetSdkVersion 34/targetSdkVersion 36/g' android/app/build.gradle
+# 2. ضبط ملف pubspec ليتوافق مع الماكينة الجديدة
+sed -i 's/sdk: ">=3.0.0 <4.0.0"/sdk: ">=3.2.0 <4.0.0"/g' pubspec.yaml
 
 # 3. الرفع النهائي
 git add .
-git commit -m "Engine Fix: Updated GitHub Workflow to support Android SDK 36 for all 6 cards"
+git commit -m "Engine Upgrade: Switched to Flutter 3.22.0 to support Dart 3.4 and SDK 36 for all cards"
 git push origin main
