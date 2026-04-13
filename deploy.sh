@@ -1,80 +1,79 @@
 #!/bin/bash
 cd ~/Mirror_Scorpion2
 
-# 1. تنظيف شامل
+# 1. تنظيف عميق للمشروع وحذف الملفات التي تسبب التعارض
 flutter clean
-rm -rf android/app/build.gradle
+rm -f android/app/build.gradle
+rm -f android/app/build.gradle.kts
 
-# 2. إعادة إنشاء ملف build.gradle بنظام "الفرض المطلق"
-cat << 'APP_GRADLE' > android/app/build.gradle
-apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android'
-apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
+# 2. إنشاء ملف build.gradle.kts (الذي يطلبه جيت هب) بالقيم المطلوبة حرفياً
+cat << 'KTS_GRADLE' > android/app/build.gradle.kts
+plugins {
+    id("com.android.application")
+    id("kotlin-android")
+    id("dev.flutter.flutter-gradle-plugin")
+}
 
 android {
-    namespace "com.tetocollctionway.mirror_scorpion"
-    
-    // الأرقام اللي طلبها جيت هب بالاسم
-    compileSdkVersion 36
-    ndkVersion "28.2.13676358"
+    namespace = "com.tetocollctionway.mirror_scorpion"
+    compileSdk = 36
+    ndkVersion = "28.2.13676358"
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
     }
 
     kotlinOptions {
-        jvmTarget = '1.8'
+        jvmTarget = "1.8"
     }
 
     defaultConfig {
-        applicationId "com.tetocollctionway.mirror_scorpion"
-        // إجبار الأرقام هنا أيضاً
-        minSdkVersion 21
-        targetSdkVersion 36
-        compileSdk = 36
-        versionCode 1
-        versionName "1.0"
-        
-        multiDexEnabled true
+        applicationId = "com.tetocollctionway.mirror_scorpion"
+        minSdk = 21
+        targetSdk = 36
+        versionCode = 1
+        versionName = "1.0"
     }
 
     buildTypes {
-        release {
-            signingConfig signingConfigs.debug
+        getByName("release") {
+            signingConfig = signingConfigs.getByName("debug")
         }
     }
 }
+KTS_GRADLE
 
-dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation 'com.android.support:multidex:1.0.3'
-}
-APP_GRADLE
+# 3. تحديث ملف الإعدادات العام (Settings) ليتناسب مع النظام الجديد
+cat << 'SETTINGS' > android/settings.gradle
+pluginManagement {
+    def flutterSdkPath = {
+        def properties = new Properties()
+        file("local.properties").withInputStream { properties.load(it) }
+        def flutterSdkPath = properties.getProperty("flutter.sdk")
+        assert flutterSdkPath != null, "flutter.sdk not set in local.properties"
+        return flutterSdkPath
+    }()
 
-# 3. تحديث ملف الإعدادات الخارجي ليتوافق مع Gradle الجديد
-cat << 'ROOT_GRADLE' > android/build.gradle
-buildscript {
-    ext.kotlin_version = '1.9.0'
+    includeBuild("$flutterSdkPath/packages/flutter_tools/gradle")
+
     repositories {
         google()
         mavenCentral()
-    }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:8.1.0'
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        gradlePluginPortal()
     }
 }
 
-allprojects {
-    repositories {
-        google()
-        mavenCentral()
-    }
+plugins {
+    id "dev.flutter.flutter-gradle-plugin" version "1.0.0" apply false
+    id "com.android.application" version "8.1.0" apply false
+    id "org.jetbrains.kotlin.android" version "1.8.22" apply false
 }
-ROOT_GRADLE
 
-# 4. الرفع التلقائي
+include ":app"
+SETTINGS
+
+# 4. الرفع التلقائي لفرض التغييرات
 git add .
-git commit -m "Final Force: SDK 36, NDK 28, and manual build.gradle override"
+git commit -m "Ultra Force: Switched to build.gradle.kts with SDK 36 and NDK 28 as requested by GitHub"
 git push origin main
