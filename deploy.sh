@@ -1,67 +1,79 @@
 #!/bin/bash
 cd ~/Mirror_Scorpion2
 
-# 1. تنظيف شامل
-flutter clean
+# 1. تحديث المكتبات (pubspec.yaml) لتكون جاهزة لكل الكروت (AI, Vision, Audio)
+cat << 'PUBSPEC' > pubspec.yaml
+name: mirror_scorpion
+description: Mirror Scorpion Ultimate AI Project
+version: 1.0.0+1
 
-# 2. إنشاء ملف gradle.properties لفرض الـ SDK على مستوى النظام
-cat << 'GPROPS' > android/gradle.properties
+environment:
+  sdk: '>=3.2.0 <4.0.0' # رفعنا الـ SDK بتاع فلاتر لضمان أحدث المميزات
+
+dependencies:
+  flutter:
+    sdk: flutter
+  google_fonts: ^6.2.0
+  shared_preferences: ^2.2.3
+  intl: ^0.19.0
+  http: ^1.2.1
+  google_generative_ai: ^0.4.4 # كرت الإلهام والذكاء الصناعي
+  speech_to_text: ^6.6.2       # كرت الحوار المترجم
+  flutter_tts: ^4.2.2          # كرت النطق الصوتي
+  camera: ^0.11.0              # كرت العدسة والمستندات
+  google_mlkit_translation: ^0.12.0
+  google_mlkit_text_recognition: ^0.14.0 # كرت المستندات
+  google_mlkit_commons: ^0.9.0
+  path_provider: ^2.1.3
+  share_plus: ^10.1.0
+  sqflite: ^2.3.3              # قاعدة البيانات لكل الكروت
+  flutter_spinkit: ^5.2.1
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/data/
+    - assets/images/
+PUBSPEC
+
+# 2. ضبط أندرويد "النهائي" (Android Manifest) لإعطاء صلاحيات المايك والكاميرا والإنترنت
+cat << 'MANIFEST' > android/app/src/main/AndroidManifest.xml
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.tetocollctionway.mirror_scorpion">
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
+    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <application
+        android:label="Mirror Scorpion"
+        android:name="${applicationName}"
+        android:icon="@mipmap/ic_launcher">
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:theme="@style/LaunchTheme">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+    </application>
+</manifest>
+MANIFEST
+
+# 3. فرض الـ SDK 36 والـ NDK 28 في ملف الإعدادات الأساسي
+cat << 'GRADLE_PROPS' > android/gradle.properties
 org.gradle.jvmargs=-Xmx4G
 android.useAndroidX=true
 android.enableJetifier=true
-# فرض الإصدارات هنا
 flutter.compileSdkVersion=36
 flutter.targetSdkVersion=36
 flutter.minSdkVersion=21
-GPROPS
+android.ndkVersion=28.2.13676358
+GRADLE_PROPS
 
-# 3. تعديل ملف build.gradle (القديم والجديد) لضمان القضاء على رقم 34
-# هنستخدم "sed" عشان نبدل أي رقم 34 بـ 36 في كل ملفات الجرادل
-find android -name "*.gradle" -exec sed -i 's/compileSdkVersion 34/compileSdkVersion 36/g' {} +
-find android -name "*.gradle" -exec sed -i 's/targetSdkVersion 34/targetSdkVersion 36/g' {} +
-
-# 4. إعادة بناء ملف android/app/build.gradle بشكل يدوي وصريح جداً
-cat << 'APP_GRADLE' > android/app/build.gradle
-def localProperties = new Properties()
-def localPropertiesFile = rootProject.file('local.properties')
-if (localPropertiesFile.exists()) {
-    localPropertiesFile.withReader('UTF-8') { reader ->
-        localProperties.load(reader)
-    }
-}
-
-apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android'
-apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
-
-android {
-    namespace "com.tetocollctionway.mirror_scorpion"
-    
-    // الأرقام النهائية المطلوبة
-    compileSdkVersion 36
-    ndkVersion "28.2.13676358"
-
-    defaultConfig {
-        applicationId "com.tetocollctionway.mirror_scorpion"
-        minSdkVersion 21
-        targetSdkVersion 36
-        versionCode 1
-        versionName "1.0"
-        multiDexEnabled true
-    }
-
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
-
-    kotlinOptions {
-        jvmTarget = '1.8'
-    }
-}
-APP_GRADLE
-
-# 5. الرفع الرفع التلقائي
+# 4. تنظيف ورفع
+flutter clean
 git add .
-git commit -m "Final Overdrive: Forced SDK 36 via gradle.properties and global sed replacement"
+git commit -m "Foundation Update: Prepared structure for all 6 cards with SDK 36/NDK 28"
 git push origin main
